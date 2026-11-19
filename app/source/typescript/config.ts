@@ -16,6 +16,7 @@ export interface TrailRuntimeConfig {
   aiLocation: string;
   mapStyleUrl: string;
   offlineTileHosts: string;
+  offlineTileDownloadsEnabled: boolean;
 }
 
 declare global {

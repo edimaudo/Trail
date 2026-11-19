@@ -37,3 +37,20 @@ def test_page_uses_pinned_browser_modules_without_package_install() -> None:
     assert "https://unpkg.com/maplibre-gl@6.19.0/dist/maplibre-gl.mjs" in html
     assert '<script type="importmap">' in html
     assert '<script type="module" src="/js/main.js"></script>' in html
+
+
+def test_display_controls_and_assistant_removal_are_present_in_shell() -> None:
+    html = (ROOT / "app" / "templates" / "index.html").read_text(encoding="utf-8")
+    assert 'id="font-size-setting"' in html
+    assert '<option value="1" selected>Medium</option>' in html
+    assert 'id="theme-toggle"' in html
+    assert 'id="assistant-form"' not in html
+    assert 'class="right-panel"' not in html
+
+
+def test_openstreetmap_is_the_default_basemap_and_offline_prefetch_is_opt_in() -> None:
+    source = (ROOT / "app" / "source" / "typescript" / "main.ts").read_text(encoding="utf-8")
+    assert "https://tile.openstreetmap.org/{z}/{x}/{y}.png" in source
+    assert "OpenStreetMap contributors" in source
+    assert "offlineTileDownloadsEnabled" in source
+    assert "OFFLINE_TILE_DOWNLOADS_ENABLED" in (ROOT / "app" / "main.py").read_text(encoding="utf-8")

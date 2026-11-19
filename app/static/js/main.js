@@ -215,8 +215,8 @@ function mapStoragePanel(trip) {
         : '<p class="map-storage-empty">No downloaded map packs yet.</p>';
     const progress = state.tilePackProgress;
     return `<section class="map-storage-card" aria-label="Offline map storage">
-    <div class="map-storage-main"><div><h3>Offline map</h3><p>${escapeHtml(currentStatus)}</p><small>${escapeHtml(used)} · ${storage.persistent ? 'Protected from routine browser cleanup' : 'Browser storage may be cleared when device space is low'}</small></div>
-      <div class="map-storage-actions"><button id="cache-basemap" class="secondary-button compact-button" type="button" ${(!window.TRAIL_CONFIG?.mapStyleUrl || !online() || state.tilePackBusy || trip.isDemo) ? 'disabled' : ''}>${state.tilePackBusy ? 'Saving map…' : pack ? 'Update map' : 'Download map'}</button>${pack ? `<button id="remove-current-map-pack" class="text-button" type="button" ${state.tilePackBusy ? 'disabled' : ''}>Remove map</button>` : ''}</div></div>
+    <div class="map-storage-main"><div><h3>Offline map</h3><p>${escapeHtml(currentStatus)}</p><small>${escapeHtml(used)} · ${storage.persistent ? 'Protected from routine browser cleanup' : 'Browser storage may be cleared when device space is low'}${!window.TRAIL_CONFIG?.offlineTileDownloadsEnabled ? ' · Offline area downloads require a tile source that permits prefetching.' : ''}</small></div>
+      <div class="map-storage-actions"><button id="cache-basemap" class="secondary-button compact-button" type="button" ${(!window.TRAIL_CONFIG?.offlineTileDownloadsEnabled || !window.TRAIL_CONFIG?.mapStyleUrl || !online() || state.tilePackBusy || trip.isDemo) ? 'disabled' : ''}>${state.tilePackBusy ? 'Saving map…' : pack ? 'Update map' : 'Download map'}</button>${pack ? `<button id="remove-current-map-pack" class="text-button" type="button" ${state.tilePackBusy ? 'disabled' : ''}>Remove map</button>` : ''}</div></div>
     ${progress ? `<div class="map-download-progress"><div class="map-download-progress-heading"><span>${escapeHtml(progress.message)}</span><strong>${progress.total ? Math.round(progress.completed / progress.total * 100) : 0}%</strong></div><div class="offline-package-progress" role="progressbar" aria-label="Offline map download progress" aria-valuemin="0" aria-valuemax="${Math.max(1, progress.total)}" aria-valuenow="${progress.completed}"><span style="width:${progress.total ? Math.round(progress.completed / progress.total * 100) : 0}%"></span></div></div>` : ''}
     <details class="map-storage-details"><summary>Manage downloaded maps (${state.mapPacks.length})</summary><div class="map-pack-list">${packRows}</div></details>
   </section>`;
@@ -327,7 +327,7 @@ function renderTrailView(trip, guide, landmarks) {
     <section class="map-section">
       <div class="section-heading-row"><div><h2>Trail map</h2></div><div class="map-heading-actions"><button id="use-device-gps" class="secondary-button compact-button" type="button">${state.deviceGps ? 'Stop device GPS' : 'Use device GPS'}</button></div></div>
       <div class="map-shell"><div id="trail-map" aria-label="Saved route and landmarks map"></div><div id="map-placeholder" class="map-placeholder"><div><strong>${trip.isDemo ? 'Illustrative route preview' : 'Saved route geometry'}</strong><p>${trip.isDemo ? 'Add a Google Maps server key to create live trip routes. This preview is not for field navigation.' : 'Route and points of interest are stored locally for offline access.'}</p></div></div><div class="map-legend"><span><i class="legend-dot legend-route"></i> Planned route</span><span><i class="legend-dot legend-official"></i> Official trail data</span><span><i class="legend-dot legend-poi"></i> Points of interest</span><span><i class="legend-dot legend-user"></i> Your position</span></div></div>
-      <p class="map-caption">${trip.isDemo ? 'Demo geometry only. Configure the Google Maps Platform server key to compile a live route.' : 'The route and POI overlay are stored locally. Download a licensed map pack to save the geographic basemap for offline use.'}</p>
+      <p class="map-caption">${trip.isDemo ? 'Demo geometry only. Configure the Google Maps Platform server key to compile a live route.' : 'The route and POI overlay are stored locally. OpenStreetMap provides the live basemap; offline area downloads require a tile provider that explicitly permits prefetching.'}</p>
       ${mapStoragePanel(trip)}
       <p class="route-caveat">${trip.routeSource === 'gpx-import' ? 'Imported GPX geometry is user-supplied and has not been independently certified. Nearby official trail segments indicate proximity, not proof that the uploaded line is on an open trail.' : 'Google walking and cycling directions are not verified hiking-trail geometry. Nearby official trail segments indicate proximity, not proof that the complete route is open or safe. Confirm access and closures with the land manager.'}</p>
     </section>
@@ -382,8 +382,17 @@ function mapFeatures() {
 function localMapStyle() {
     return {
         version: 8,
-        sources: {},
-        layers: [{ id: 'background', type: 'background', paint: { 'background-color': '#edf2e9' } }],
+        sources: {
+            'openstreetmap-raster': {
+                type: 'raster',
+                tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                tileSize: 256,
+                attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>',
+            },
+        },
+        layers: [
+            { id: 'openstreetmap-base', type: 'raster', source: 'openstreetmap-raster', minzoom: 0, maxzoom: 19 },
+        ],
     };
 }
 function initializeMap(useFallback = false) {
@@ -1093,6 +1102,50 @@ function updateAttachment() {
     if (label)
         label.textContent = state.attachedImage ? `Photo attached · ${state.attachedImage.name}` : '';
 }
+function applyDisplayPreferences() {
+    const theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+    const scale = document.documentElement.style.getPropertyValue('--font-scale') || '1';
+    const themeColor = document.querySelector('meta[name="theme-color"]');
+    themeColor?.setAttribute('content', theme === 'dark' ? '#151c17' : '#f6f7f3');
+    const select = $('#font-size-setting');
+    if (select)
+        select.value = ['0.75', '1', '1.25'].includes(scale) ? scale : '1';
+    const toggle = $('#theme-toggle');
+    if (toggle) {
+        const dark = theme === 'dark';
+        toggle.setAttribute('aria-pressed', String(dark));
+        toggle.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+        const label = toggle.querySelector('.theme-toggle-label');
+        if (label)
+            label.textContent = dark ? 'Light mode' : 'Dark mode';
+        const icon = toggle.querySelector('.theme-toggle-icon');
+        if (icon)
+            icon.textContent = dark ? '☀' : '◐';
+    }
+}
+function registerDisplayControls() {
+    applyDisplayPreferences();
+    $('#font-size-setting')?.addEventListener('change', (event) => {
+        const value = event.currentTarget.value;
+        const scale = ['0.75', '1', '1.25'].includes(value) ? value : '1';
+        document.documentElement.style.setProperty('--font-scale', scale);
+        try {
+            localStorage.setItem('trail-font-scale', scale);
+        }
+        catch { /* preferences remain active for this session */ }
+    });
+    $('#theme-toggle')?.addEventListener('click', () => {
+        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        const themeColor = document.querySelector('meta[name="theme-color"]');
+        themeColor?.setAttribute('content', next === 'dark' ? '#151c17' : '#f6f7f3');
+        try {
+            localStorage.setItem('trail-theme', next);
+        }
+        catch { /* preferences remain active for this session */ }
+        applyDisplayPreferences();
+    });
+}
 async function bootstrap() {
     try {
         state.config = await loadRuntimeConfig();
@@ -1114,6 +1167,7 @@ async function bootstrap() {
             state.activeTripId = seed.id;
         }
         await reconcileMapPacks();
+        registerDisplayControls();
         registerEvents();
         state.chat = await getTripChat(state.activeTripId);
         renderMainView();

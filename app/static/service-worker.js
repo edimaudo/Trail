@@ -1,4 +1,4 @@
-const SHELL_CACHE = 'trail-shell-v8';
+const SHELL_CACHE = 'trail-shell-v9';
 const VENDOR_CACHE = 'trail-vendor-v1';
 const MAP_PACK_PREFIX = 'trail-map-pack-';
 const SHELL_FILES = [

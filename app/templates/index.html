@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f6f7f3">
+  <meta name="color-scheme" content="light dark">
   <meta name="description" content="Prepare a route, cache a field guide and stay informed when the trail goes offline.">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
@@ -29,6 +30,10 @@
   <div class="app-frame" id="app">
     <header class="topbar">
       <a class="brand-lockup" href="/" aria-label="Trail home"><span class="brand-name">Trail</span></a>
+      <div class="display-controls" aria-label="Display preferences">
+        <label class="font-control" for="font-size-setting"><span>Text size</span><select id="font-size-setting" aria-label="Text size"><option value="0.75">Small</option><option value="1" selected>Medium</option><option value="1.25">Large</option></select></label>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false"><span class="theme-toggle-icon" aria-hidden="true">◐</span><span class="theme-toggle-label">Dark mode</span></button>
+      </div>
     </header>
 
     <div class="app-layout">
@@ -46,30 +51,21 @@
         <div id="main-view" class="main-view"><div class="app-loading">Loading your saved trail data…</div></div>
       </main>
 
-      <aside class="right-panel">
-        <section class="assistant-panel" aria-label="Trail Assistant">
-          <div class="assistant-head">
-            <div class="assistant-title"><h2>Trail Assistant</h2><p id="assistant-subtitle">Uses your saved route and field guide</p></div>
-          </div>
-          <div id="assistant-notice" class="assistant-notice" hidden></div>
-          <div id="assistant-messages" class="assistant-messages" aria-live="polite">
-            <div class="assistant-empty"><h3>Ask about the trail ahead.</h3><p>Answers use this trip’s saved route, nearby landmarks and field-guide notes.</p><div class="prompt-chips"><button class="prompt-chip" data-prompt="What terrain should I expect?" type="button">What terrain should I expect?</button><button class="prompt-chip" data-prompt="How do I treat a bee sting?" type="button">How do I treat a bee sting?</button><button class="prompt-chip" data-prompt="What should I watch for near water?" type="button">What should I watch for near water?</button></div></div>
-          </div>
-          <div id="attachment-chip" class="attachment-chip" hidden><span id="attachment-name"></span><button id="remove-image" type="button" aria-label="Remove image">×</button></div>
-          <form id="assistant-form" class="assistant-composer">
-            <input id="assistant-image" type="file" accept="image/jpeg,image/png" class="visually-hidden">
-            <button class="attach-button" id="attach-photo" type="button" aria-label="Attach a photo" title="Attach a JPEG or PNG photo">＋</button>
-            <label class="visually-hidden" for="assistant-question">Ask Trail Assistant</label>
-            <input id="assistant-question" name="question" type="text" placeholder="Ask Trail Assistant…" autocomplete="off">
-            <button class="send-button" id="send-message" type="submit" aria-label="Send message">↑</button>
-          </form>
-          <p class="assistant-footnote">AI responses can be wrong. Never eat wild plants or fungi based on AI identification. For severe injuries, contact local emergency services.</p>
-        </section>
-      </aside>
+
     </div>
 
     <div id="toast" class="toast-message" role="status" aria-live="polite" hidden></div>
   </div>
+  <script>
+    (() => {
+      try {
+        const theme = localStorage.getItem('trail-theme') || 'light';
+        const scale = localStorage.getItem('trail-font-scale') || '1';
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.setProperty('--font-scale', ['0.75','1','1.25'].includes(scale) ? scale : '1');
+      } catch (_) { document.documentElement.dataset.theme = 'light'; }
+    })();
+  </script>
   <script type="module" src="/js/main.js"></script>
 </body>
 </html>

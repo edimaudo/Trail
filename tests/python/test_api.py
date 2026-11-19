@@ -111,7 +111,7 @@ def test_service_worker_is_root_scoped_and_offline_page_is_served() -> None:
     worker = client.get("/service-worker.js")
     assert worker.status_code == 200
     assert worker.headers["service-worker-allowed"] == "/"
-    assert "trail-shell-v8" in worker.text
+    assert "trail-shell-v9" in worker.text
     assert "trail-vendor-v1" in worker.text
     assert "/js/main.js" in worker.text
     assert "/css/app.css" in worker.text

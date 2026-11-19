@@ -78,7 +78,7 @@ The browser modules are pinned in the import map in `app/templates/index.html`:
 - Dexie 4.2.1.
 - MapLibre GL JS 6.19.0.
 
-They are loaded as browser ESM modules rather than installed through npm. The service worker warms the pinned library files and caches subsequent module requests. **The first use must be online** so the browser can retrieve those libraries and the user can prepare a trip/map pack. After the service worker has installed and the libraries have been cached, saved trips and downloaded map resources can be used offline.
+They are loaded as browser ESM modules rather than installed through npm. The service worker warms the pinned library files and caches subsequent module requests. **The first use must be online** so the browser can retrieve those libraries and the user can prepare a trip/map pack. After the service worker has installed and the libraries have been cached, saved trips and locally stored trip data remain available offline. The default OpenStreetMap public tile server is used only for normal interactive map viewing; its policy prohibits bulk prefetch and offline area downloads. Configure a self-hosted or third-party OSM-derived tile source whose licence explicitly permits offline downloads before enabling `OFFLINE_TILE_DOWNLOADS_ENABLED=true`.
 
 The offline experience still depends on the map provider's licence allowing offline tile downloads. Trail does not silently cache public map tiles from providers that prohibit it.
 

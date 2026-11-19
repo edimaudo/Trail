@@ -40,7 +40,7 @@ APP_CHECK_ENFORCED = os.getenv("APP_CHECK_ENFORCED", "false").lower() == "true"
 
 app = FastAPI(
     title="Trail PWA",
-    version="1.7.0",
+    version="1.8.0",
     description="Python-first Trail Progressive Web App. FastAPI serves the installable PWA and application APIs; Firebase AI Logic runs through its supported browser SDK.",
     docs_url="/api/docs" if APP_ENV != "production" else None,
     redoc_url=None,
@@ -1005,6 +1005,7 @@ async def public_config() -> dict[str, Any]:
         "aiLocation": os.getenv("FIREBASE_AI_LOCATION", "global"),
         "mapStyleUrl": os.getenv("MAP_STYLE_URL", ""),
         "offlineTileHosts": os.getenv("OFFLINE_TILE_HOSTS", ""),
+        "offlineTileDownloadsEnabled": os.getenv("OFFLINE_TILE_DOWNLOADS_ENABLED", "false").lower() == "true",
     }
 
 

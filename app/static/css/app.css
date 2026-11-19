@@ -496,3 +496,100 @@ a { color: var(--forest-2); }
   .map-storage-actions .compact-button { padding: 0 9px; font-size: 11px; }
   .map-pack-row { align-items: flex-start; }
 }
+
+/* Display preferences and accessible local-first layout */
+:root { --font-scale: 1; color-scheme: light; }
+html { min-width: 320px; }
+body { zoom: var(--font-scale, 1); }
+.topbar { justify-content: space-between; gap: 16px; }
+.display-controls { display: flex; align-items: center; justify-content: flex-end; gap: 12px; min-width: 0; }
+.font-control { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font-size: 12px; font-weight: 600; }
+.font-control select, .theme-toggle { min-height: 40px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); padding: 0 11px; font: inherit; }
+.theme-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; font-weight: 650; }
+.theme-toggle-icon { font-size: 17px; line-height: 1; }
+.app-layout { grid-template-columns: 226px minmax(0, 1fr); }
+.right-panel, .assistant-panel { display: none !important; }
+.main-content { min-width: 0; }
+:where(button, a, input, select, textarea, summary, [tabindex]):focus-visible { outline: 3px solid #1769aa !important; outline-offset: 3px !important; }
+button, input, select, textarea { accent-color: #285541; }
+button, select, input { min-height: 36px; }
+.maplibregl-ctrl-attrib, .maplibregl-ctrl-attrib a { color: #26352b !important; }
+.maplibregl-ctrl-attrib { background: rgba(255,255,255,.94) !important; }
+
+html[data-theme="dark"] { color-scheme: dark; --ink:#edf2ed; --muted:#bdc8be; --soft:#9eada1; --line:#39463d; --paper:#202923; --canvas:#151c17; --forest:#79ad88; --forest-2:#a5c9ac; --moss:#2d3b30; --amber:#e1b77f; --amber-bg:#3b3023; }
+html[data-theme="dark"] body, html[data-theme="dark"] .app-frame,
+html[data-theme="dark"] .main-content { background:#151c17; color:#edf2ed; }
+html[data-theme="dark"] .topbar, html[data-theme="dark"] .left-sidebar,
+html[data-theme="dark"] .metrics-row, html[data-theme="dark"] .offline-package-card,
+html[data-theme="dark"] .elevation-profile-section, html[data-theme="dark"] .planner-card,
+html[data-theme="dark"] .map-storage-card, html[data-theme="dark"] .conditions-section,
+html[data-theme="dark"] .guide-summary, html[data-theme="dark"] .guide-missing,
+html[data-theme="dark"] .guide-accordion-item, html[data-theme="dark"] .safety-note,
+html[data-theme="dark"] .trail-network-section { background:#202923 !important; border-color:#39463d !important; color:#edf2ed !important; }
+html[data-theme="dark"] .brand-lockup, html[data-theme="dark"] .main-heading h1,
+html[data-theme="dark"] .section-heading-row h2, html[data-theme="dark"] .form-heading h2,
+html[data-theme="dark"] .sidebar-section-title, html[data-theme="dark"] .offline-package-heading h2,
+html[data-theme="dark"] .elevation-profile-section h2, html[data-theme="dark"] .metric-block strong,
+html[data-theme="dark"] .guide-summary strong, html[data-theme="dark"] .guide-missing strong,
+html[data-theme="dark"] .landmark-copy strong, html[data-theme="dark"] .condition-stat strong,
+html[data-theme="dark"] .daylight-row strong { color:#edf2ed !important; }
+html[data-theme="dark"] p, html[data-theme="dark"] small, html[data-theme="dark"] label,
+html[data-theme="dark"] .main-heading p, html[data-theme="dark"] .metric-block span,
+html[data-theme="dark"] .metric-block small, html[data-theme="dark"] .field-hint,
+html[data-theme="dark"] .environment-footnote, html[data-theme="dark"] .source-attribution,
+html[data-theme="dark"] .map-caption, html[data-theme="dark"] .route-caveat,
+html[data-theme="dark"] .trail-match-row small, html[data-theme="dark"] .condition-stat > span,
+html[data-theme="dark"] .conditions-primary > span, html[data-theme="dark"] .conditions-primary > small,
+html[data-theme="dark"] .daylight-row small { color:#bdc8be !important; }
+html[data-theme="dark"] .nav-item, html[data-theme="dark"] .saved-trip-item,
+html[data-theme="dark"] .saved-trip-label strong, html[data-theme="dark"] .saved-trip-label small,
+html[data-theme="dark"] .sidebar-empty { color:#c5d0c6 !important; }
+html[data-theme="dark"] .nav-item:hover, html[data-theme="dark"] .nav-item.active,
+html[data-theme="dark"] .saved-trip-item:hover, html[data-theme="dark"] .saved-trip-item.active { background:#344638 !important; color:#f1f6f1 !important; }
+html[data-theme="dark"] .secondary-button, html[data-theme="dark"] .font-control select,
+html[data-theme="dark"] .theme-toggle, html[data-theme="dark"] .text-field,
+html[data-theme="dark"] input:not([type="checkbox"]):not([type="range"]),
+html[data-theme="dark"] select, html[data-theme="dark"] textarea { background:#29352d !important; color:#f1f5f1 !important; border-color:#536356 !important; }
+html[data-theme="dark"] .primary-button { background:#477b58 !important; border-color:#78a985 !important; color:#fff !important; }
+html[data-theme="dark"] .map-legend, html[data-theme="dark"] .map-caption,
+html[data-theme="dark"] .position-readout, html[data-theme="dark"] .simulator-panel,
+html[data-theme="dark"] .landmark-row, html[data-theme="dark"] .guide-copy,
+html[data-theme="dark"] .offline-package-item { background:#202923 !important; color:#edf2ed !important; border-color:#39463d !important; }
+html[data-theme="dark"] .maplibregl-ctrl-attrib, html[data-theme="dark"] .maplibregl-ctrl-attrib a { color:#17221a !important; background:rgba(255,255,255,.96) !important; }
+html[data-theme="dark"] .maplibregl-ctrl button { filter: invert(.88) hue-rotate(160deg); }
+html[data-theme="dark"] a { color:#a9d3b2; }
+html[data-theme="dark"] .environment-warning, html[data-theme="dark"] .commercial-weather-warning { background:#3a3023 !important; border-color:#806744 !important; color:#f4dfbf !important; }
+
+@media (max-width: 720px) {
+  .topbar { min-height: 64px; height:auto; flex-basis:auto; padding:10px 14px; align-items:center; }
+  .display-controls { gap:7px; }
+  .font-control { gap:5px; font-size:11px; }
+  .font-control select, .theme-toggle { min-height:38px; padding:0 8px; }
+  .theme-toggle-label { display:none; }
+  .app-layout { display:flex; flex-direction:column; }
+  .left-sidebar { order:0; }
+  .main-content { order:1; }
+}
+@media (max-width: 380px) {
+  .topbar { padding-left:10px; padding-right:10px; gap:8px; }
+  .brand-name { font-size:21px; }
+  .display-controls { gap:5px; }
+  .font-control span { display:none; }
+  .font-control select { max-width:92px; }
+}
+
+/* Light-theme secondary text contrast improvements */
+html:not([data-theme="dark"]) .main-content p,
+html:not([data-theme="dark"]) .main-content small,
+html:not([data-theme="dark"]) .main-content label,
+html:not([data-theme="dark"]) .main-content .metric-block span,
+html:not([data-theme="dark"]) .main-content .metric-block small,
+html:not([data-theme="dark"]) .sidebar-empty,
+html:not([data-theme="dark"]) .saved-trip-label strong,
+html:not([data-theme="dark"]) .saved-trip-label small,
+html:not([data-theme="dark"]) .data-freshness,
+html:not([data-theme="dark"]) .field-hint,
+html:not([data-theme="dark"]) .environment-footnote,
+html:not([data-theme="dark"]) .source-attribution,
+html:not([data-theme="dark"]) .route-caveat,
+html:not([data-theme="dark"]) .map-caption { color:#526257; }
