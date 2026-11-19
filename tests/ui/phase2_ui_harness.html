@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trail offline map UI validation</title>
+  <link rel="stylesheet" href="../../app/static/css/app.css">
+  <style>
+    .app-frame { height: auto; min-height: 100vh; }
+    .app-layout { min-height: calc(100vh - 70px); }
+    .validation-map { height: 280px; border-radius: 9px; border: 1px solid #e1e8e0; background: linear-gradient(135deg,#edf3e9,#e1ebdf); display:grid; place-items:center; color:#57725e; }
+    .validation-map span { padding: 12px; text-align: center; }
+    .main-content { min-width: 0; }
+    .demo-metric { padding: 13px; border: 1px solid #e7eee6; border-radius: 8px; }
+    .demo-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin: 16px 0; }
+    @media(max-width:720px){.demo-metrics{grid-template-columns:repeat(2,minmax(0,1fr));}}
+  </style>
+</head>
+<body>
+<div class="app-frame">
+  <header class="topbar"><span class="brand-name">Trail</span></header>
+  <div class="app-layout">
+    <aside class="left-sidebar"><nav class="side-navigation"><button class="nav-item active">Trail</button><button class="nav-item">Field guide</button></nav><div class="sidebar-divider"></div><div class="sidebar-heading-row"><h2 class="sidebar-section-title">Saved trips</h2><button class="sidebar-add" type="button" aria-label="Add trip">+</button></div><div class="saved-trip-list"><p>Wissahickon Valley</p></div></aside>
+    <main class="main-content">
+      <section class="main-heading"><div><h1>Wissahickon Valley</h1><p>Valley Green Inn → Devil's Pool</p></div><div class="heading-actions"><button class="secondary-button">New trip</button></div></section>
+      <div class="demo-metrics"><div class="demo-metric">Distance <strong>6.4 km</strong></div><div class="demo-metric">Estimated time <strong>1h 50m</strong></div><div class="demo-metric">Elevation <strong>180 m</strong></div></div>
+      <section class="map-section">
+        <div class="section-heading-row"><h2>Trail map</h2></div>
+        <div class="validation-map"><span>Saved route and nearby landmarks</span></div>
+        <p class="map-caption">Download a licensed map pack to save the geographic basemap for offline use.</p>
+        <section class="map-storage-card" aria-label="Offline map storage">
+          <div class="map-storage-main"><div><h3>Offline map</h3><p id="pack-status">No offline basemap is saved for this trip.</p><small id="storage-summary">46.2 MB used of 2 GB · Browser storage may be cleared when device space is low</small></div>
+            <div class="map-storage-actions"><button id="download-map" class="secondary-button compact-button" type="button">Download map</button></div></div>
+          <div class="map-download-progress" hidden><div class="map-download-progress-heading"><span>Saving map resources 4 of 10</span><strong>40%</strong></div><div class="offline-package-progress" role="progressbar" aria-label="Offline map download progress" aria-valuemin="0" aria-valuemax="10" aria-valuenow="4"><span style="width:40%"></span></div></div>
+          <details class="map-storage-details"><summary>Manage downloaded maps (0)</summary><div class="map-pack-list"><p class="map-storage-empty">No downloaded map packs yet.</p></div></details>
+        </section>
+      </section>
+    </main>
+    <aside class="right-panel"><section class="assistant-panel"><div class="assistant-head"><div class="assistant-title"><h2>Trail Assistant</h2><p>Uses your saved route and field guide</p></div></div><div class="assistant-messages"><h3>Ask about the trail ahead.</h3></div></section></aside>
+  </div>
+</div>
+<script>
+  const download = document.querySelector('#download-map');
+  const progress = document.querySelector('.map-download-progress');
+  const summary = document.querySelector('.map-storage-details summary');
+  const list = document.querySelector('.map-pack-list');
+  download.addEventListener('click', () => {
+    download.disabled = true;
+    download.textContent = 'Saving map…';
+    progress.hidden = false;
+  });
+  window.addEventListener('message', (event) => {
+    if (event.data === 'complete-download') {
+      download.disabled = false;
+      download.textContent = 'Update map';
+      document.querySelector('#pack-status').textContent = '1,240 map tiles · 1,252 resources · 28.4 MB saved';
+      summary.textContent = 'Manage downloaded maps (1)';
+      list.innerHTML = '<div class="map-pack-row"><span><strong>Wissahickon Valley</strong><small>1,240 tiles · 28.4 MB · 11/18/2026</small></span><button class="text-button" id="remove-map" type="button">Remove</button></div>';
+      progress.hidden = true;
+    }
+  });
+  document.addEventListener('click', (event) => {
+    if (event.target.id === 'remove-map') {
+      list.innerHTML = '<p class="map-storage-empty">No downloaded map packs yet.</p>';
+      download.textContent = 'Download map';
+      summary.textContent = 'Manage downloaded maps (0)';
+      document.querySelector('#pack-status').textContent = 'No offline basemap is saved for this trip.';
+    }
+  });
+</script>
+</body>
+</html>
